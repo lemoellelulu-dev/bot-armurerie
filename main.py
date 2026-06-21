@@ -7,7 +7,8 @@ import database as db
 from commands import setup_commands
 from views import PanelView
 
-TOKEN = "MTUxODM1NjE0NjA2MTE4MTEwMA.G27sSy.Sgo9kn6RJ6iUQ_C_OA7KAvkWAX4LKpkKenlq7Q"
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
 if not TOKEN:
     raise RuntimeError("Variable d'environnement DISCORD_TOKEN manquante.")
 
