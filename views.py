@@ -250,7 +250,7 @@ class SuiviRetourSelectView(View):
             discord.SelectOption(
                 label=s["numero_suivi"],
                 value=s["numero_suivi"],
-                description=s.get("nom_arme", s["arme_id"])[:50],
+                description=(s["nom_arme"] or s["arme_id"])[:50],
             )
             for s in suivis[:25]
         ]
