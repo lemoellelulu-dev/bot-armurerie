@@ -308,7 +308,7 @@ class PanelView(View):
         e = discord.Embed(title="📋 Vos armes en cours", color=0x3498DB)
         for s in suivis:
             e.add_field(
-                name=f"{s['numero_suivi']} – {s.get('nom_arme', s['arme_id'])}",
+                name=f"{s['numero_suivi']} – {s['nom_arme'] or s['arme_id']}",
                 value=f"Sorti le {s['date_sortie']}",
                 inline=False,
             )
@@ -328,7 +328,7 @@ class RechercheModal(Modal, title="Rechercher un suivi"):
             await interaction.response.send_message("❌ Suivi introuvable.", ephemeral=True)
             return
         e = discord.Embed(title=f"🔎 Suivi {suivi['numero_suivi']}", color=0x9B59B6)
-        e.add_field(name="Arme", value=suivi.get("nom_arme", suivi["arme_id"]), inline=True)
+        e.add_field(name="Arme", value=suivi["nom_arme"] or suivi["arme_id"], inline=True)
         e.add_field(name="Identifiant", value=suivi["arme_id"], inline=True)
         e.add_field(name="Utilisateur", value=suivi["utilisateur"], inline=True)
         e.add_field(name="Matricule", value=suivi["matricule"], inline=True)
