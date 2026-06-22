@@ -59,8 +59,8 @@ class MatriculeModal(Modal, title="Renseignez votre matricule"):
     matricule = TextInput(
         label="Matricule (ex: HKA12345)",
         placeholder="AAA00000",
-        min_length=8,
-        max_length=8,
+        min_length=5,
+        max_length=5,
     )
 
     def __init__(self, arme_id: str, arme_nom: str):
