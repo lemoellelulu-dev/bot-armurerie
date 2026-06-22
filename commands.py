@@ -234,11 +234,18 @@ def setup_commands(bot: commands.Bot) -> None:
     #  /config_logs
     # ─────────────────────────────────────────────
     @bot.tree.command(name="config_logs", description="[Admin] Configurer les salons.")
-    @app_commands.describe(channel_armurerie="Salon panel", channel_logs="Salon logs")
+    @app_commands.describe(
+        channel_armurerie="Salon panel",
+        channel_logs="Salon logs général",
+        channel_logs_sortie="Salon logs sorties d'armes",
+        channel_logs_retour="Salon logs retours d'armes",
+    )
     async def config_logs(
         interaction: discord.Interaction,
         channel_armurerie: str | None = None,
         channel_logs: str | None = None,
+        channel_logs_sortie: str | None = None,
+        channel_logs_retour: str | None = None,
     ):
         if not interaction.user.guild_permissions.administrator:
             await interaction.response.send_message("❌ Administrateur requis.", ephemeral=True)
@@ -247,6 +254,10 @@ def setup_commands(bot: commands.Bot) -> None:
             db.set_config("channel_armurerie", channel_armurerie)
         if channel_logs:
             db.set_config("channel_logs", channel_logs)
+        if channel_logs_sortie:
+            db.set_config("channel_logs_sortie", channel_logs_sortie)
+        if channel_logs_retour:
+            db.set_config("channel_logs_retour", channel_logs_retour)
         await interaction.response.send_message("✅ Configuration des salons mise à jour.", ephemeral=True)
 
     # ─────────────────────────────────────────────

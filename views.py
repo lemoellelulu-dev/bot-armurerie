@@ -11,10 +11,15 @@ from config import CATEGORIES, ETATS_RETOUR, MATRICULE_PATTERN
 #  Helpers
 # ──────────────────────────────────────────────────────────────
 
-async def send_log(guild: discord.Guild, embed: discord.Embed) -> None:
-    """Envoie un embed dans le salon de logs."""
+async def send_log(guild: discord.Guild, embed: discord.Embed, type_log: str = "general") -> None:
+    """Envoie un embed dans le salon de logs approprié selon le type."""
     from database import get_config
-    log_name = get_config("channel_logs") or "logs-armurerie"
+    if type_log == "sortie":
+        log_name = get_config("channel_logs_sortie") or get_config("channel_logs") or "logs-armurerie"
+    elif type_log == "retour":
+        log_name = get_config("channel_logs_retour") or get_config("channel_logs") or "logs-armurerie"
+    else:
+        log_name = get_config("channel_logs") or "logs-armurerie"
     channel = discord.utils.get(guild.text_channels, name=log_name)
     if channel:
         await channel.send(embed=embed)
@@ -118,6 +123,7 @@ class ConfirmSortieView(View):
         await send_log(
             interaction.guild,
             embed_sortie(suivi_id, self.arme_nom, self.arme_id, interaction.user, self.matricule),
+            type_log="sortie",
         )
 
 
@@ -128,7 +134,7 @@ class ConfirmSortieView(View):
 class ArmeSelectView(View):
     def __init__(self, categorie: str):
         super().__init__(timeout=120)
-        armes = db.liste_armes(categorie=categorie)
+        armes = db.liste_armes(categorie=categorie, disponible=True)
         if not armes:
             return
 
@@ -160,7 +166,7 @@ class CategorieSelectView(View):
 
         async def callback(inter: discord.Interaction):
             categorie = select.values[0]
-            armes = db.liste_armes(categorie=categorie)
+            armes = db.liste_armes(categorie=categorie, disponible=True)
             if not armes:
                 await inter.response.send_message(
                     f"❌ Aucune arme disponible dans la catégorie **{categorie}**.", ephemeral=True
@@ -226,7 +232,7 @@ class ConfirmRetourView(View):
         e.add_field(name="Durée", value=f"{duree // 60}h{duree % 60:02d}m")
         await interaction.response.edit_message(content=None, embed=e, view=None)
 
-        await send_log(interaction.guild, embed_retour(data, interaction.user))
+        await send_log(interaction.guild, embed_retour(data, interaction.user), type_log="retour")
 
 
 # ──────────────────────────────────────────────────────────────
@@ -244,7 +250,7 @@ class SuiviRetourSelectView(View):
             discord.SelectOption(
                 label=s["numero_suivi"],
                 value=s["numero_suivi"],
-                description=(s["nom_arme"] or s["arme_id"])[:50],
+                description=s.get("nom_arme", s["arme_id"])[:50],
             )
             for s in suivis[:25]
         ]
@@ -302,7 +308,7 @@ class PanelView(View):
         e = discord.Embed(title="📋 Vos armes en cours", color=0x3498DB)
         for s in suivis:
             e.add_field(
-                name=f"{s['numero_suivi']} – {s['nom_arme'] or s['arme_id']}",
+                name=f"{s['numero_suivi']} – {s.get('nom_arme', s['arme_id'])}",
                 value=f"Sorti le {s['date_sortie']}",
                 inline=False,
             )
@@ -322,7 +328,7 @@ class RechercheModal(Modal, title="Rechercher un suivi"):
             await interaction.response.send_message("❌ Suivi introuvable.", ephemeral=True)
             return
         e = discord.Embed(title=f"🔎 Suivi {suivi['numero_suivi']}", color=0x9B59B6)
-        e.add_field(name="Arme", value=suivi["nom_arme"] or suivi["arme_id"], inline=True)
+        e.add_field(name="Arme", value=suivi.get("nom_arme", suivi["arme_id"]), inline=True)
         e.add_field(name="Identifiant", value=suivi["arme_id"], inline=True)
         e.add_field(name="Utilisateur", value=suivi["utilisateur"], inline=True)
         e.add_field(name="Matricule", value=suivi["matricule"], inline=True)
