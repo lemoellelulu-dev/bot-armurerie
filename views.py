@@ -59,7 +59,7 @@ class MatriculeModal(Modal, title="Renseignez votre matricule"):
     matricule = TextInput(
         label="Matricule (ex: HKA12345)",
         placeholder="AAA00000",
-        min_length=5,
+        min_length=,
         max_length=5,
     )
 
@@ -72,7 +72,7 @@ class MatriculeModal(Modal, title="Renseignez votre matricule"):
         mat = self.matricule.value.strip().upper()
         if not MATRICULE_PATTERN.match(mat):
             await interaction.response.send_message(
-                "❌ Format de matricule invalide. Format attendu : 3 lettres + 5 chiffres (ex: HKA12345).",
+                "❌ Format de matricule invalide. Format attendu : 3 lettres + 2 chiffres (ex: HKA12).",
                 ephemeral=True,
             )
             return
