@@ -59,7 +59,7 @@ class MatriculeModal(Modal, title="Renseignez votre matricule"):
     matricule = TextInput(
         label="Matricule (ex: HKA12345)",
         placeholder="AAA00000",
-        min_length=,
+        min_length=5,
         max_length=5,
     )
 
