@@ -57,8 +57,8 @@ def embed_retour(data: dict, user: discord.Member) -> discord.Embed:
 
 class MatriculeModal(Modal, title="Renseignez votre matricule"):
     matricule = TextInput(
-        label="Matricule (ex: HKA12345)",
-        placeholder="AAA00000",
+        label="Matricule (ex: HKA12)",
+        placeholder="AAA00",
         min_length=5,
         max_length=5,
     )
