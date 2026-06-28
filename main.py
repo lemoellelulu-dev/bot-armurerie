@@ -43,11 +43,8 @@ class ArmurierBot(commands.Bot):
     async def on_ready(self):
         print(f"[Armurerie] Connecté en tant que {self.user} (ID: {self.user.id})")
         await self.change_presence(
-            activity=discord.Activity(
-                type=discord.ActivityType.watching,
-                name="l'armurerie 🔫",
-            )
-        )
+    activity=discord.CustomActivity(name="Créer par RyZe (ryzee_20)")
+)
 
 
 bot = ArmurierBot()
